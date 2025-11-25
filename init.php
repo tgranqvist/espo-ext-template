@@ -31,7 +31,20 @@ $bundled = $es6 ? "true" : "false";
 $jsTranspiled = $es6 ? "true" : "false";
 fclose($fh);
 
-$replacePlaceholders = function (string $file) use ($name, $nameHyphen, $nameLabel, $description, $author, $bundled, $jsTranspiled)
+fwrite(\STDOUT, "Create \"Custom\" directory for dev-time test setup? [y/n]\n");
+$fh = fopen('php://stdin', 'r');
+$createCustom = trim(fgets($fh)) === 'y';
+fclose($fh);
+
+if ($createCustom) mkdir("src/files/custom/Espo/Custom");
+
+fwrite(\STDOUT, "Enter port number to run on: ");
+$fh = fopen('php://stdin', 'r');
+$port = intval(trim(fgets($fh)), 10);
+$phpPort = $port + 1000;
+fclose($fh);
+
+$replacePlaceholders = function (string $file) use ($name, $nameHyphen, $nameLabel, $description, $author, $bundled, $jsTranspiled, $port, $phpPort)
 {
     $content = file_get_contents($file);
 
@@ -42,15 +55,21 @@ $replacePlaceholders = function (string $file) use ($name, $nameHyphen, $nameLab
     $content = str_replace('{@author}', $author, $content);
     $content = str_replace('{@bundled}', $bundled, $content);
     $content = str_replace('{@jsTranspiled}', $jsTranspiled, $content);
+    $content = str_replace('{@port}', $port, $content);
+    $content = str_replace('{@phpPort}', $phpPort, $content);
 
     file_put_contents($file, $content);
 };
+
 
 $replacePlaceholders('package.json');
 $replacePlaceholders('extension.json');
 $replacePlaceholders('jsconfig.json');
 $replacePlaceholders('config-default.json');
 $replacePlaceholders('README.md');
+
+$replacePlaceholders('nginx.conf');
+
 $replacePlaceholders('src/files/custom/Espo/Modules/MyModuleName/Resources/module.json');
 
 if ($es6) {
@@ -78,4 +97,8 @@ rename('src/files/client/custom/modules/my-module-name', 'src/files/client/custo
 rename('tests/unit/Espo/Modules/MyModuleName', 'tests/unit/Espo/Modules/'. $name);
 rename('tests/integration/Espo/Modules/MyModuleName', 'tests/integration/Espo/Modules/'. $name);
 
-echo "Ready. Now you need to run 'npm install'.\n";
+mkdir('logs');
+mkdir('temp');
+
+echo "Ready. Now you need to run 'npm install'. I will now delete myself. Goodbye.\n";
+unlink("init.php");

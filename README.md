@@ -1,6 +1,16 @@
 # Template repository for EspoCRM extensions
 
-Create a repository for your extension from this template.
+A customization of Espo CRM's [extension template][ext-template] to fit my dev workflow.
+
+My tweaks:
+
+- Add nginx config file
+- Update `init.php` to
+  - Ask for and set port number for dev server
+  - Create log and temp directories for nginx
+  - Optionally create `custom/Espo/Custom` directory for test entities etc.
+  - Delete itself
+- Update `.gitignore` to ignore log and temp directories
 
 ## Preparing repository
 
@@ -10,10 +20,7 @@ Run:
 php init.php
 ```
 
-It will ask to enter an extension name and some other information.
-
-After that, you can remove `init.php` file from your repository. Commit changes and proceed to configuration & building.
-
+It will ask to enter an extension name and some other information. Commit changes and proceed to configuration & building.
 
 ## Configuration
 
@@ -354,3 +361,6 @@ npm update
 ## License
 
 Change a license in `LICENSE` file. The current license is intended for scripts of this repository. It's not supposed to be used for code of your extension.
+
+
+[ext-template]: https://github.com/espocrm/ext-template/
